@@ -15,19 +15,19 @@ class WikiCrawler:
         return False
 
     @staticmethod
-    def __get_url_of_wikilang(url: str):
-        """Returns URL to page containing WikiLang code"""
-        wikilang_url = url.replace('https://', '')
-        wikilang_url = wikilang_url.replace('http://', '')
+    def __get_url_of_wikicode(url: str):
+        """Returns URL to page containing Wikicode code"""
+        wikicode_url = url.replace('https://', '')
+        wikicode_url = wikicode_url.replace('http://', '')
 
-        root = wikilang_url.split('/')[0]
-        title = wikilang_url.split('/')[-1]
-        wikilang_url = "https://{0}/w/index.php?title={1}&action=edit".format(root, title)
+        root = wikicode_url.split('/')[0]
+        title = wikicode_url.split('/')[-1]
+        wikicode_url = "https://{0}/w/index.php?title={1}&action=edit".format(root, title)
 
-        return wikilang_url
+        return wikicode_url
 
     def get_page(self, url: str):
-        """Returns HTML & WikiLang of given site"""
+        """Returns HTML & Wikicode of given site"""
         if not self.__site_exist(url):
             return None, None
 
@@ -36,14 +36,14 @@ class WikiCrawler:
         html = html.find(id="bodyContent")
         html = html.find(id="mw-content-text")
 
-        wikilang_response = requests.get(self.__get_url_of_wikilang(url))
-        wikilang = BeautifulSoup(wikilang_response.content, 'html.parser')
-        wikilang = wikilang.find(id="wpTextbox1")
+        wikicode_response = requests.get(self.__get_url_of_wikicode(url))
+        wikicode = BeautifulSoup(wikicode_response.content, 'html.parser')
+        wikicode = wikicode.find(id="wpTextbox1")
 
-        return {"html": html, "wikilang": wikilang}
+        return {"html": html, "wikicode": wikicode}
 
     def get_pages(self, urls: list):
-        """Returns HTML & WikiLang of given sites"""
+        """Returns HTML & Wikicode of given sites"""
         out = []
 
         for url in urls:
@@ -55,13 +55,13 @@ class WikiCrawler:
         return out
 
     def get_random_page(self):
-        """Generates random wikipedia page and returns HTML & WikiLang of site"""
+        """Generates random wikipedia page and returns HTML & Wikicode of site"""
         request = requests.get("https://en.wikipedia.org/wiki/Special:Random")
 
         return self.get_page(request.url)
 
     def get_random_pages(self, count: int):
-        """Generates N random wikipedia pages and returns HTML & WikiLang of sites"""
+        """Generates N random wikipedia pages and returns HTML & Wikicode of sites"""
         out = []
 
         for i in range(count):
