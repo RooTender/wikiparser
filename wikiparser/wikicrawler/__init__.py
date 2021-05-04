@@ -20,8 +20,8 @@ class WikiCrawler:
 
         root = modified.split('/')[0]
         title = modified.split('/')[-1]
-
         modified = "https://{0}/w/index.php?title={1}&action=edit".format(root, title)
+
         return modified
 
     def get_page(self, url: str):
@@ -41,11 +41,24 @@ class WikiCrawler:
 
     def get_pages(self, urls: list):
         out = []
+
         for url in urls:
-            out.append([self.get_page(url)])
+            if url.split('/')[-1] == "Special:Random":
+                out.append([self.get_random_page()])
+            else:
+                out.append([self.get_page(url)])
 
         return out
 
-    def get_random(self):
+    def get_random_page(self):
         request = requests.get("https://en.wikipedia.org/wiki/Special:Random")
+
         return self.get_page(request.url)
+
+    def get_random_pages(self, count: int):
+        out = []
+
+        for i in range(count):
+            out.append([self.get_random_page()])
+
+        return out
